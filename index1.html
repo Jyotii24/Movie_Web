@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search App</title>
+    <style>
+        /* General Styling with Black and Red Theme */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #080808;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .img1 {
+            width: 120px;
+            height: 120px;
+            margin-left: 10px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 45px;
+            font-weight: bold;
+            margin-right: 500px;
+            color: #dfdada;
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            /* Allow wrapping on smaller screens */
+            justify-content: space-between;
+            align-items: center;
+            background-color: #090808;
+            color: white;
+            padding: 20px;
+            border: 2px solid white;
+            box-shadow: 0 0 15px white;
+            height: auto;
+            /* Allow height to adjust */
+            width: 100%;
+            /* Make it full width */
+            max-width: 100vw;
+            /* Restrict max width to viewport */
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Header Buttons */
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            /* Wrap buttons if space is limited */
+        }
+
+        .history {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-buttons button {
+            padding: 10px 20px;
+            background-color: #d50000;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+            height: 50px;
+            font-size: 18px;
+        }
+
+        .header-buttons button:hover {
+            background-color: #c62828;
+        }
+
+        /* Search Container */
+        .search-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 5px;
+            max-width: 500px;
+            /* Limit width */
+            flex-grow: 1;
+            /* Allow to grow */
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            flex: 1;
+            /* Take available space */
+            min-width: 0;
+            /* Prevent overflow */
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #d50000;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #c62828;
+        }
+
+        /* Grid for Movie Results */
+        .results {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* Four images per row on large screens */
+            gap: 20px;
+            padding: 20px;
+            max-height: calc(100vh - 120px);
+            /* Adjust for header and other elements */
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        /* Individual Movie Item */
+        .result-item {
+            background: #212121;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgb(234, 234, 223);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            /* Important for positioning play icon */
+            transition: transform 0.3s ease;
+            height: 460px;
+            width: 100%;
+            /* Make sure items fit within the container */
+            max-width: 350px;
+            /* Limit maximum width */
+            box-sizing: border-box;
+        }
+
+        .result-item img {
+            width: 100%;
+            height: 330px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            /* Ensure images fit properly */
+            transition: transform 0.3s ease;
+        }
+
+        /* Dropdown Styling */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            min-width: 120px;
+            margin-left: 14px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #575757;
+        }
+
+        /* Play Icon inside the Movie Item */
+        .play-icon {
+            font-size: 30px;
+            color: #ff1744;
+            cursor: pointer;
+            position: absolute;
+            /* Position inside the box */
+            bottom: 10px;
+            /* Align to the bottom of the box */
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .play-icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* Hover effect for movie item */
+        .result-item:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+
+        .movie-info {
+            flex: 1;
+            /* Allows the info to take up remaining space */
+            min-width: 300px;
+            /* Sets a minimum width */
+            max-width: 600px;
+            /* Sets a maximum width */
+            text-align: left;
+            /* Aligns text to the left */
+            word-wrap: break-word;
+            /* Forces long words to wrap */
+            overflow-wrap: break-word;
+            /* Breaks overflowing words */
+        }
+
+        .movie-info p {
+            margin: 10px 0;
+            /* Adds space between paragraphs */
+            line-height: 1.4;
+            /* Improves readability with line spacing */
+        }
+
+        .movie-details {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin: 40px auto;
+            box-shadow: 0 0 10px white;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1100px;
+            position: relative;
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        /* Delete Icon */
+        .delete-icon {
+            font-size: 24px;
+            color: #d50000;
+            cursor: pointer;
+            position: absolute;
+            /* Absolute position to allow custom placement */
+            right: 20px;
+            /* Adjusted for better alignment */
+            top: 20px;
+            background: none;
+            border: none;
+            transition: color 0.3s ease;
+        }
+
+        .delete-icon:hover {
+            color: #c62828;
+        }
+
+        footer {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            border-top: 2px solid #333;
+        }
+
+        .footer-section {
+            margin: 10px;
+            flex: 1 1 200px;
+            /* Flex to adjust sections on different screens */
+        }
+
+        .footer-section h3 {
+            margin-bottom: 10px;
+            color: #ff1744;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin: 8px 0;
+        }
+
+        .footer-section a {
+            color: #e0e0e0;
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: #ff1744;
+        }
+
+        .social-media-icons {
+            display: flex;
+            gap: 10px;
+            size: 50px;
+
+        }
+
+        .social-media-icons img {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-media-icons a {
+            color: #e0e0e0;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+
+        .social-media-icons a:hover {
+            color: #ff1744;
+        }
+
+
+
+        /* RESPONSIVENESS */
+
+        /* For medium-sized screens (Tablets, smaller laptops) */
+        @media (max-width: 1024px) {
+            .results {
+                grid-template-columns: repeat(3, 1fr);
+                /* Three items per row */
+            }
+
+            .search-container {
+                width: 100%;
+                margin-left: 5px;
+                margin-bottom: 10px;
+            }
+
+            .movie-details {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+
+        /* For small screens (Mobile devices) */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 45px;
+                font-weight: bold;
+                margin-right: 360px;
+                color: #dfdada;
+                gap: 5px;
+            }
+
+            .img1 {
+                width: 120px;
+                height: 120px;
+                margin-left: 10px;
+                position: relative;
+                gap: 5px;
+            }
+
+
+            .header-buttons {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            input[type="text"] {
+                width: 200px;
+            }
+
+            .results {
+                grid-template-columns: repeat(2, 1fr);
+                /* Two items per row */
+            }
+
+            .movie-details {
+                flex-direction: column;
+                align-items: center;
+                width: 90%;
+                margin: 20px auto;
+            }
+
+            .movie-details img {
+                width: 100%;
+            }
+
+            .search-container {
+                width: 100%;
+                margin-left: 5px;
+                margin-bottom: 10px;
+            }
+
+            .delete-icon {
+                right: 10px;
+                top: 10px;
+            }
+        }
+
+        /* For extra-small screens (Mobile phones) */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 45px;
+                font-weight: bold;
+                margin-right: 300px;
+                color: #dfdada;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+                /* Reduce padding for small screens */
+            }
+
+            .search-container {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                margin: 0;
+            }
+
+            .header-buttons {
+                /* Include padding and border in element's total width */
+                width: 100%;
+                justify-content: space-between;
+                flex-direction: column;
+                margin-top: 10px;
+            }
+
+            .header-buttons button {
+                width: 95%;
+                margin-bottom: 10px;
+            }
+
+            .results {
+                grid-template-columns: repeat(1, 1fr);
+                /* One item per row for very small screens */
+            }
+
+            .dropdown {
+                width: 100%;
+                justify-content: space-between;
+                flex-direction: column;
+            }
+
+            .movie-details {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .delete-icon {
+                right: 10px;
+                top: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            header {
+                justify-content: flex-start;
+                /* Ensure alignment at the start */
+            }
+
+            h1 {
+                margin-top: -5px;
+                margin-right: 0;
+                /* Remove large right margin */
+            }
+
+            .img1 {
+                margin-bottom: -5px;
+            }
+
+            header {
+                gap: 5px;
+                /* Add 5px gap between image and heading */
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img class="img1"
+            src="https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/2e427ce7-b2f7-4c9a-a79b-8c473fadcb55/bfbc3beb-7902-41e6-b139-e6110c8c7983.png"
+            alt="movie logo">
+        <h1>Movie App</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for a movie...">
+            <button id="searchButton">🔍</button>
+        </div>
+        <div class="header-buttons">
+            <button id="homeButton">Home</button>
+            <div class="dropdown">
+                <button>Categories⬇</button>
+                <div class="dropdown-content">
+                    <a href="#" id="latestMovies">Latest</a>
+                    <a href="#" id="bollywoodMovies">Bollywood</a>
+                    <a href="#" id="hollywoodMovies">Hollywood</a>
+                </div>
+            </div>
+            <button id="historyButton">Watching History</button>
+        </div>
+    </header>
+
+    <div id="movieDetails" class="movie-details" style="display: none;">
+        <img id="moviePoster" src="" alt="Movie Poster">
+        <div class="movie-info">
+            <h2 id="movieTitle">Movie Name</h2>
+            <p><strong>Year:</strong> <span id="movieYear"></span></p>
+            <p><strong>Rating:</strong> <span id="movieRating"></span></p>
+            <p><strong>Genre:</strong> <span id="movieGenre"></span></p>
+            <p><strong>Writer:</strong> <span id="movieWriter"></span></p>
+            <p><strong>Actors:</strong> <span id="movieActors"></span></p>
+            <p><strong>Plot:</strong> <span id="moviePlot"></span></p>
+            <p><strong>Language:</strong> <span id="movieLanguage"></span></p>
+            <p><strong>Nominated:</strong> <span id="movieNominated"></span></p>
+            <button id="delete-icon" style="position: absolute; top: 10px; right: 10px;">✖</button>
+            <script>
+                const deleteIcon = document.getElementById('delete-icon');
+                deleteIcon.addEventListener('click', () => {
+                    // Perform the desired action when the delete icon is clicked
+                    // For example, you can remove the movie details from the view
+                    document.getElementById('movieDetails').style.display = 'none';
+                });
+            </script>
+        </div>
+    </div>
+
+    <div class="results" id="results"></div>
+    <footer>
+        <div class="footer-section">
+            <h3>About Us</h3>
+            <p>We are a movie search platform dedicated to helping you find the best movies and TV shows. Discover new
+                films, explore genres, and dive into the world of cinema.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Categories</h3>
+            <ul>
+                <li><a href="#" id="latestMoviesFooter">Latest</a></li>
+                <li><a href="#" id="bollywoodMoviesFooter">Bollywood</a></li>
+                <li><a href="#" id="hollywoodMoviesFooter">Hollywood</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <ul>
+                <li>Email: <a href="mailto:contact@movieapp.com">contact@movieapp.com</a></li>
+                <li>Phone: +123-456-7890</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Follow Us</h3>
+            <div class="social-media-icons">
+                <a href="#" aria-label="Facebook">
+                    <img src="https://img.icons8.com/color/48/000000/facebook.png" alt="Facebook Icon" width="24"
+                        height="24">
+                </a>
+                <a href="#" aria-label="Twitter">
+                    <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt="Twitter Icon" width="24"
+                        height="24">
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <img src="https://img.icons8.com/color/48/000000/instagram-new--v1.png" alt="Instagram Icon"
+                        width="24" height="24">
+                </a>
+                <a href="#" aria-label="YouTube">
+                    <img src="https://img.icons8.com/color/48/000000/youtube-play.png" alt="YouTube Icon" width="24"
+                        height="24">
+                </a>
+
+            </div>
+        </div>
+    </footer>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchButton = document.getElementById('searchButton');
+            const searchInput = document.getElementById('searchInput');
+            const resultsDiv = document.getElementById('results');
+            const movieDetails = document.getElementById('movieDetails');
+            const homeButton = document.getElementById('homeButton');
+            const historyButton = document.getElementById('historyButton');
+            const latestMovies = document.getElementById('latestMovies');
+            const bollywoodMovies = document.getElementById('bollywoodMovies');
+            const hollywoodMovies = document.getElementById('hollywoodMovies');
+
+            const apiKey = 'e8a305bd';
+
+            // Fetch movies by search term
+            searchButton.addEventListener('click', function () {
+                const movieTitle = searchInput.value.trim();
+                if (!movieTitle) {
+                    alert('Please enter a movie name to search.');
+                    return;
+                }
+                fetchMovies(`https://www.omdbapi.com/?s=${encodeURIComponent(movieTitle)}&apikey=${apiKey}`);
+            });
+
+            // Fetch movies by category
+            latestMovies.addEventListener('click', () => fetchMoviesByCategory('latest'));
+            bollywoodMovies.addEventListener('click', () => fetchMoviesByCategory('bollywood'));
+            hollywoodMovies.addEventListener('click', () => fetchMoviesByCategory('hollywood'));
+
+            // Fetch user's watching history
+            historyButton.addEventListener('click', () => {
+                const history = JSON.parse(localStorage.getItem('watchHistory')) || [];
+                resultsDiv.innerHTML = '';
+                history.forEach(movie => {
+                    createMovieItem(movie, false);
+                });
+            });
+
+            // Fetch movies
+            function fetchMovies(apiUrl) {
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsDiv.innerHTML = ''; // Clear previous results
+                        if (data.Response === "True") {
+                            data.Search.forEach(movie => createMovieItem(movie, true));
+                        } else {
+                            resultsDiv.innerHTML = `<p>No movies found: ${data.Error}</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        alert('There was an error fetching the data. Please try again later.');
+                    });
+            }
+
+            // Fetch movies by category
+            function fetchMoviesByCategory(category) {
+                let apiUrl;
+                if (category === 'latest') apiUrl = `https://www.omdbapi.com/?s=latest&apikey=${apiKey}`;
+                else if (category === 'bollywood') apiUrl = `https://www.omdbapi.com/?s=bollywood&apikey=${apiKey}`;
+                else if (category === 'hollywood') apiUrl = `https://www.omdbapi.com/?s=hollywood&apikey=${apiKey}`;
+                fetchMovies(apiUrl);
+            }
+
+            // Create movie item for search results or history
+            function createMovieItem(movie, addToHistory) {
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                resultItem.innerHTML = `
+            <img src="${movie.Poster !== "N/A" ? movie.Poster : 'placeholder.jpg'}" alt="${movie.Title}">
+            <div class="info">
+                <p>${movie.Title} (${movie.Year})</p>
+                <p>Type: ${movie.Type.charAt(0).toUpperCase() + movie.Type.slice(1)}</p>
+            </div>
+            <span class="play-icon">▶️</span>
+        `;
+
+
+                // Add play functionality to the play icon
+                resultItem.querySelector('.play-icon').addEventListener('click', () => {
+                    fetchMovieDetails(movie.imdbID);
+                    if (addToHistory) updateWatchHistory(movie);
+                });
+
+                // Check if it's a history item, if true, add delete icon
+                if (!addToHistory) {
+                    const deleteIcon = document.createElement('span');
+                    deleteIcon.classList.add('delete-icon');
+                    deleteIcon.innerHTML = '✖';
+                    deleteIcon.style.color = '#ffffff'; // Set the color to white
+                    deleteIcon.style.backgroundColor = 'red'; // Set the background color to red
+                    deleteIcon.addEventListener('click', () => {
+                        // Handle the deletion from local storage
+                        deleteFromWatchHistory(movie.imdbID);
+                        resultItem.remove(); // Remove the item from the view
+                    });
+                    resultItem.appendChild(deleteIcon); // Add the delete icon to the item
+                }
+
+                resultsDiv.appendChild(resultItem);
+            }
+
+            // Fetch and display detailed movie info
+            function fetchMovieDetails(imdbID) {
+                const apiUrl = `https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`;
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.Response === "True") {
+                            document.getElementById('moviePoster').src = data.Poster !== "N/A" ? data.Poster : 'placeholder.jpg';
+                            document.getElementById('movieTitle').textContent = data.Title;
+                            document.getElementById('movieYear').textContent = data.Year;
+                            document.getElementById('movieRating').textContent = data.imdbRating;
+                            document.getElementById('movieGenre').textContent = data.Genre;
+                            document.getElementById('movieWriter').textContent = data.Writer;
+                            document.getElementById('movieActors').textContent = data.Actors;
+                            document.getElementById('moviePlot').textContent = data.Plot;
+                            document.getElementById('movieLanguage').textContent = data.Language;
+                            document.getElementById('movieNominated').textContent = data.Awards;
+                            movieDetails.style.display = 'flex';
+
+                            // Fetch related movies based on the title of the current movie
+                            fetchRelatedMovies(data.Title);
+                        } else {
+                            alert('Movie details not found.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching movie details:', error);
+                        alert('There was an error fetching the movie details. Please try again later.');
+                    });
+            }
+
+            // Fetch related movies based on the movie title
+            function fetchRelatedMovies(title) {
+                const apiUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(title)}&apikey=${apiKey}`;
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsDiv.innerHTML = ''; // Clear previous related movies
+                        if (data.Response === "True") {
+                            data.Search.forEach(movie => createMovieItem(movie, false)); // Show related movies
+                        } else {
+                            resultsDiv.innerHTML = `<p>No related movies found: ${data.Error}</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching related movies:', error);
+                        alert('There was an error fetching the related movies. Please try again later.');
+                    });
+            }
+
+            // Update watching history
+            function updateWatchHistory(movie) {
+                const history = JSON.parse(localStorage.getItem('watchHistory')) || [];
+                if (!history.find(item => item.imdbID === movie.imdbID)) {
+                    history.push(movie);
+                    localStorage.setItem('watchHistory', JSON.stringify(history));
+                }
+            }
+
+            // Delete from watching history
+            function deleteFromWatchHistory(imdbID) {
+                let history = JSON.parse(localStorage.getItem('watchHistory')) || [];
+                history = history.filter(movie => movie.imdbID !== imdbID);
+                localStorage.setItem('watchHistory', JSON.stringify(history));
+            }
+
+            // Home button functionality
+            homeButton.addEventListener('click', () => {
+                movieDetails.style.display = 'none'; // Hide movie details
+                fetchMovies(`https://www.omdbapi.com/?s=movie&apikey=${apiKey}`); // Fetch a default set of movies
+            });
+
+            // Fetch initial set of movies
+            fetchMovies(`https://www.omdbapi.com/?s=movie&apikey=${apiKey}`);
+        });
+    </script>
+</body>
+
+</html>

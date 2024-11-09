@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+        body {
+            background-image: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fG1vdmllJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D');
+            font-family: 'Roboto', sans-serif;
+            background-color: rgb(0, 0, 0);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: zoomIn 3s forwards, backgroundAnimation 3s infinite;
+        }
+
+        .heading {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 180px;
+            text-shadow: 
+                -2px -3px 0 #000000,  
+                6px -8px 0 #000000,
+                -2px 3px 0 #000000,
+                6px 8px 0 #e4727267;
+            font-family: 'Lobster', cursive;
+            color: rgb(113, 26, 26);
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            text-align: center;
+        }
+
+        .letter {
+            opacity: 0;
+            transform: scale(0);
+            animation: popIn 2s forwards;
+        }
+
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @media (max-width: 1024px) {
+            .heading {
+                font-size: 120px;
+            }
+        }
+
+        /* Small tablets and mobile landscape */
+        @media (max-width: 768px) {
+            .heading {
+                font-size: 80px;
+            }
+        }
+
+        /* Mobile portrait */
+        @media (max-width: 480px) {
+            .heading {
+                font-size: 50px;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 320px) {
+            .heading {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="heading">
+        <span class="letter zoom" style="animation-delay: 0s;">C</span>
+        <span class="letter" style="animation-delay: 1s;">i</span>
+        <span class="letter" style="animation-delay: 1.2s;">n</span>
+        <span class="letter" style="animation-delay: 1.4s;">e</span>
+        <span class="letter" style="animation-delay: 1.6s;">m</span>
+        <span class="letter" style="animation-delay: 1.8s;">a</span>
+    </h1>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                window.location.href = "index1.html";
+            }, 5000);  // Increased delay to allow animation completion
+        });
+    </script> 
+</body>
+</html>q
